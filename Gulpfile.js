@@ -18,6 +18,7 @@ var opts = {
 	deployLocation: 'D:\\JenkinsDrops\\WSB_All',
 	verbose: true
 };
+gulp.env.silent = !opts.verbose;
 
 opts.jshint = {
 	"evil": false,
@@ -46,13 +47,14 @@ opts.jshint = {
 opts.mocha = {
 };
 
-gulp.onAll(function (e) {
-	if (opts.verbose) {
-		console.log('');
-		console.log('  gulp:'+e.src+(e.task?', task:'+e.task:'')+', mess:"'+e.mess+'"'); // show start and end for each task
-	}
+
+// stop the build on a task failure
+gulp.on('err', function (e) {
 	if (e.err) {
-		throw e.err;
+		console.log();
+		console.log('Gulp build failed:');
+		console.log(e.err);
+		process.exit(1);
 	}
 });
 

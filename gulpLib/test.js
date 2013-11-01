@@ -21,17 +21,16 @@ var setOpts = function (o) {
 
 var runJSHint = function (cb) {
 	// TODO: junit log at log/jshint.xml
-	var jshintSuccess = false; // nothing disputed it yet
+	var jshintSuccess = true; // nothing disputed it yet
 	var mess = opts.verbose ? 'linting $file' : '';
 	var stream = gulp.src('./**/*.js')
-		.pipe(ignore(['./**/*.min.js','./dist/**','./**/libs/**']))
-		.pipe(ignore(['./node_modules/**','./packages/**']))
+		.pipe(ignore(['./node_modules/**']))
 		.pipe(verbose(mess))
 		.pipe(jshint(opts.jshint))
 		.pipe(es.map(function (file, cb) {
-			if (!file.jshintSuccess) {
+			if (!file.jshint.success) {
 				jshintSuccess = false;
-				file.jshintResults.forEach(function (err/*, index*/) {
+				file.jshint.results.forEach(function (err/*, index*/) {
 					console.log(err.mess);
 				});
 			}
@@ -39,7 +38,8 @@ var runJSHint = function (cb) {
 		}));
 	stream.once('end', function () {
 		if (!jshintSuccess) {
-			throw new Error('JSHint failed on one or more files');
+			return cb('JSHint failed on one or more files');
+			//throw new Error('JSHint failed on one or more files');
 		}
 		cb();
 	});
