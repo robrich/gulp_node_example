@@ -1,0 +1,43 @@
+{
+  "name": "gulp_playground",
+  "description": "A gulp-based build for Node projects",
+  "version": "0.0.1",
+  "author": "Rob Richardson (http://robrich.org/)",
+  "main": "./index.js",
+  "keywords": [
+    "async",
+    "task",
+    "parallel",
+    "compose"
+  ],
+  "dependencies": {
+    "sequencify": "~0.0.5",
+    "events": "~0.5.0"
+  },
+  "devDependencies": {
+    "mocha": "~1.13.0",
+    "should": "~2.0.1",
+    "gulp": "~2.2.0",
+    "gulp-jshint": "0.0.1",
+    "gulp-header": "~0.4.0",
+    "gulp-uglify": "0.0.4",
+    "async": "~0.2.9",
+    "rimraf": "~2.2.2",
+    "event-stream": "~3.0.16",
+    "minimatch": "~0.2.12",
+    "gulp-exec": "0.0.3",
+    "fs.extra": "~1.2.1"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "engines": {
+    "node": ">= 0.8"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/robrich/orchestrator/raw/master/LICENSE"
+    }
+  ]
+}
