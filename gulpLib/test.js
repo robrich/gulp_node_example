@@ -39,7 +39,6 @@ var runJSHint = function (cb) {
 	stream.once('end', function () {
 		if (!jshintSuccess) {
 			return cb('JSHint failed on one or more files');
-			//throw new Error('JSHint failed on one or more files');
 		}
 		cb();
 	});
@@ -64,6 +63,7 @@ var runMocha = function (cb) {
 	gulp.src('./test/**/*.js')
 		.pipe(gulpMocha(opts.mocha, cb));
 };
+// TODO: how to harvest code coverage? !!!!!
 
 module.exports = {
 	runJSHint: runJSHint,

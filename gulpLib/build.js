@@ -9,7 +9,7 @@ var header = require('gulp-header');
 var path = require('path');
 var fsExtra = require('fs.extra');
 var async = require('async');
-var gulpExec = require('gulp-exec');
+var es = require('event-stream');
 
 var opts;
 
@@ -21,7 +21,7 @@ var setOpts = function (o) {
 var runBuild = function (cb) {
 	var headerText = '/*! '+opts.copyrightHeader+'\r\nHash: '+opts.gitHash+', Build: '+opts.buildNumber+' {{now}} */';
 	var stream = gulp.src('./**/*.js')
-		.pipe(ignore(['./node_modules/**','./test/**']))
+		.pipe(ignore(['./node_modules/**','./test/**', './dist/**']))
 		.pipe(uglify())
 		.pipe(header(headerText))
 		.pipe(gulp.dest('./dist'));
@@ -30,7 +30,7 @@ var runBuild = function (cb) {
 
 var copyContentToDist = function (cb) {
 	var stream = gulp.src('./**/**')
-		.pipe(ignore(['./node_modules/**', './test/**', './**/*.js']))
+		.pipe(ignore(['./node_modules/**', './test/**', './dist/**', './**/*.js','./package.json']))
 		.pipe(gulp.dest('./dist'));
 	stream.once('end', cb);
 };
@@ -48,7 +48,13 @@ var copyModulesToDist = function (cb) {
 
 var setGitHashInPackageJson = function (cb) {
 	var stream = gulp.src('./package.json')
-		.pipe(gulpExec('git checkout "$file"'))
+		.pipe(es.map(function (file, cb) {
+			var json = JSON.parse(String(file.contents));
+			json.gitHash = opts.gitHash;
+			var string = JSON.stringify(json, null, true);
+			file.contents = new Buffer(string);
+			cb(null, file);
+		}))
 		.pipe(gulp.dest('./dist/package.json'));
 	stream.once('end', cb);
 };

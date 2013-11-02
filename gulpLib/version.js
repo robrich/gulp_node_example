@@ -32,7 +32,14 @@ var getGitHash = function (cb) {
 	});
 };
 
+// !!!!!
+var getGitBranch = function (cb) {
+
+	cb('write this');
+};
+
 module.exports = {
 	getGitHash: getGitHash,
+	getGitBranch: getGitBranch,
 	setOpts: setOpts
 };

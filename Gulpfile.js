@@ -12,7 +12,6 @@ var deploy = require('./gulpLib/deploy');
 
 
 var opts = {
-	debug: false,
 	buildNumber: process.env.BUILD_NUMBER,
 	copyrightHeader: 'Copyright {{year}} MyCompany, All Rights Reserved',
 	deployLocation: 'D:\\JenkinsDrops\\WSB_All',
@@ -53,9 +52,11 @@ gulp.on('err', function (e) {
 	if (e.err) {
 		console.log();
 		console.log('Gulp build failed:');
-		console.log(e.err);
 		process.exit(1);
 	}
+});
+gulp.on('task_err', function (e) {
+	console.log(e);
 });
 
 
@@ -67,7 +68,7 @@ gulp.task('default', ['clean', 'version', 'test', 'build', 'deploy'], noop);
 
 // The main 5 steps:
 gulp.task('clean', ['cleanVersioned', 'cleanUnversioned'], noop);
-gulp.task('version', ['getGitHash'], noop);
+gulp.task('version', ['getGitHash', 'getGitBranch'], noop);
 gulp.task('test', ['clean', 'runJSHint', 'runMocha'], noop);
 gulp.task('build', ['clean','test','runBuild', 'copyContentToDist', 'copyModulesToDist', 'setGitHashInPackageJson'], noop);
 gulp.task('deploy', ['test','build', 'copyToDeployLocation'], noop);
@@ -80,11 +81,12 @@ gulp.task('cleanVersioned', ['setOpts'], clean.cleanVersioned);
 // version
 
 gulp.task('getGitHash', ['setOpts'], version.getGitHash);
+gulp.task('getGitBranch', ['setOpts'], version.getGitBranch);
 
 // test
 
 gulp.task('runJSHint', ['setOpts', 'clean'], test.runJSHint);
-gulp.task('runMocha', ['clean'], test.runCssLint);
+gulp.task('runMocha', ['clean'], test.runMocha);
 
 // build
 
@@ -96,6 +98,7 @@ gulp.task('setGitHashInPackageJson', ['setOpts', 'getGitHash'], build.setGitHash
 // deploy
 
 gulp.task('copyToDeployLocation', ['setOpts','test','build'], deploy.copyToDeployLocation);
+gulp.task('tagGit', ['setOpts', 'test','build'], deploy.tagGit);
 
 // generic
 

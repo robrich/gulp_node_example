@@ -12,10 +12,16 @@ var setOpts = function (o) {
 };
 
 var copyToDeployLocation = function (cb) {
-	fsExtra.copyRecursive('./dist/Web/Web', opts.deployLocation, cb);
+	fsExtra.copyRecursive('./dist/', opts.deployLocation, cb);
+};
+
+// !!!!!!
+var tagGit = function (cb) {
+	cb("write this");
 };
 
 module.exports = {
 	copyToDeployLocation: copyToDeployLocation,
+	tagGit: tagGit,
 	setOpts: setOpts
 };
