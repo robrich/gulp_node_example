@@ -70,7 +70,7 @@ gulp.task('default', ['clean', 'version', 'test', 'build', 'deploy'], noop);
 gulp.task('clean', ['cleanVersioned', 'cleanUnversioned', 'cleanNodeModules'], noop);
 gulp.task('version', ['getGitHash', 'getGitBranch'], noop);
 gulp.task('test', ['clean', 'runJSHint', 'runMocha'], noop);
-gulp.task('build', ['clean','test','runBuild', 'copyContentToDist', 'copyModulesToDist', 'setGitHashInPackageJson'], noop);
+gulp.task('build', ['clean','test','minifyJavaScript', 'copyContentToDist', 'copyModulesToDist', 'setGitInPackageJson'], noop);
 gulp.task('deploy', ['test','build', 'copyToDeployLocation'], noop);
 
 // clean
@@ -91,10 +91,10 @@ gulp.task('runMocha', ['clean'], test.runMocha);
 
 // build
 
-gulp.task('runBuild', ['clean', 'setOpts'], build.runBuild);
+gulp.task('minifyJavaScript', ['clean', 'version', 'setOpts'], build.minifyJavaScript);
 gulp.task('copyContentToDist', ['clean', 'setOpts'], build.copyContentToDist);
 gulp.task('copyModulesToDist', ['clean', 'setOpts'], build.copyModulesToDist);
-gulp.task('setGitHashInPackageJson', ['setOpts', 'getGitHash'], build.setGitHashInPackageJson);
+gulp.task('setGitInPackageJson', ['clean', 'version', 'setOpts'], build.setGitInPackageJson);
 
 // deploy
 

@@ -25,7 +25,7 @@ var runJSHint = function (cb) {
 	var jshintSuccess = true; // nothing disputed it yet
 	var mess = opts.verbose ? 'linting $file' : '';
 	var stream = gulp.src('./**/*.js')
-		.pipe(ignore(['./node_modules/**']))
+		.pipe(ignore(['./node_modules/**','./dist/**']))
 		.pipe(verbose(mess))
 		.pipe(jshint(opts.jshint))
 		.pipe(es.map(function (file, cb) {

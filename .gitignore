@@ -1,8 +1,5 @@
 .DS_Store
-*.log
+dist
 node_modules
-build
-*.node
-components
 *.orig
 .idea
