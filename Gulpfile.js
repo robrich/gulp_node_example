@@ -14,7 +14,7 @@ var deploy = require('./gulpLib/deploy');
 var opts = {
 	buildNumber: process.env.BUILD_NUMBER,
 	copyrightHeader: 'Copyright {{year}} MyCompany, All Rights Reserved',
-	deployLocation: 'D:\\JenkinsDrops\\WSB_All',
+	deployLocation: './deployDir',
 	verbose: true
 };
 gulp.env.silent = !opts.verbose;
@@ -71,7 +71,7 @@ gulp.task('clean', ['cleanVersioned', 'cleanUnversioned', 'cleanNodeModules'], n
 gulp.task('version', ['getGitHash', 'getGitBranch'], noop);
 gulp.task('test', ['clean', 'runJSHint', 'runMocha'], noop);
 gulp.task('build', ['clean','test','minifyJavaScript', 'copyContentToDist', 'copyModulesToDist', 'setGitInPackageJson'], noop);
-gulp.task('deploy', ['test','build', 'copyToDeployLocation'], noop);
+gulp.task('deploy', ['test','build', 'copyToDeployLocation', 'tagGit'], noop);
 
 // clean
 
