@@ -11,6 +11,7 @@ var es = require('event-stream');
 //var path = require('path');
 //var Mocha = require('mocha');
 var gulpMocha = require('./lib/gulp-mocha');
+var childProcess = require('child_process');
 
 
 var opts;
@@ -44,29 +45,26 @@ var runJSHint = function (cb) {
 	});
 };
 
-/*
-var runMocha = function (cb) {
-
-	var mocha = new Mocha(opts.mocha || {});
-
-	// TODO: is this recursive?
-	fs.readdirSync('test').filter(function(file){
-		return file.substr(-3) === '.js'; // Only keep the .js files
-	}).forEach(function(file){
-		mocha.addFile(path.join('test', file));
-	});
-
-	mocha.run(cb);
-}
-*/
 var runMocha = function (cb) {
 	gulp.src('./test/**/*.js')
 		.pipe(gulpMocha(opts.mocha, cb));
 };
 // TODO: how to harvest code coverage? !!!!!
 
+var runNpmTest = function (cb) {
+	var npm = (process.platform === "win32" ? "npm.cmd" : "npm");
+	var s = childProcess.spawn(npm, ['test'], {stdio: 'inherit'});
+	s.on('close', function (err) {
+		if (err) {
+			return cb('npm test errored with exit code '+err);
+		}
+		cb(null);
+	});
+};
+
 module.exports = {
 	runJSHint: runJSHint,
 	runMocha: runMocha,
+	runNpmTest: runNpmTest,
 	setOpts: setOpts
 };

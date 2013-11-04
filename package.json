@@ -1,6 +1,6 @@
 {
-  "name": "gulp_playground",
-  "description": "A gulp-based build for Node projects",
+  "name": "gulp_node",
+  "description": "An example gulpfile for Node projects",
   "version": "0.0.1",
   "author": "Rob Richardson (http://robrich.org/)",
   "main": "./index.js",
@@ -11,7 +11,6 @@
     "compose"
   ],
   "dependencies": {
-    "sequencify": "~0.0.5",
     "events": "~0.5.0"
   },
   "devDependencies": {

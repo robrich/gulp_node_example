@@ -4,7 +4,9 @@
 
 var async = require('async');
 var rimraf = require('rimraf');
-var exec = require('child_process').exec;
+var childProcess = require('child_process');
+var exec = childProcess.exec;
+var spawn = childProcess.spawn;
 
 
 var opts;
@@ -43,8 +45,20 @@ var cleanVersioned = function (cb) {
 	});
 };
 
+var cleanNodeModules = function (cb) {
+	var npm = (process.platform === "win32" ? "npm.cmd" : "npm");
+	var s = spawn(npm, ['prune'], {stdio: 'inherit'});
+	s.on('close', function (err) {
+		if (err) {
+			return cb('npm prune errored with exit code '+err);
+		}
+		cb(null);
+	});
+};
+
 module.exports = {
 	cleanUnversioned: cleanUnversioned,
 	cleanVersioned: cleanVersioned,
+	cleanNodeModules: cleanNodeModules,
 	setOpts : setOpts
 };

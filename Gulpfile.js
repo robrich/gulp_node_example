@@ -67,7 +67,7 @@ var noop = function () {};
 gulp.task('default', ['clean', 'version', 'test', 'build', 'deploy'], noop);
 
 // The main 5 steps:
-gulp.task('clean', ['cleanVersioned', 'cleanUnversioned'], noop);
+gulp.task('clean', ['cleanVersioned', 'cleanUnversioned', 'cleanNodeModules'], noop);
 gulp.task('version', ['getGitHash', 'getGitBranch'], noop);
 gulp.task('test', ['clean', 'runJSHint', 'runMocha'], noop);
 gulp.task('build', ['clean','test','runBuild', 'copyContentToDist', 'copyModulesToDist', 'setGitHashInPackageJson'], noop);
@@ -77,6 +77,7 @@ gulp.task('deploy', ['test','build', 'copyToDeployLocation'], noop);
 
 gulp.task('cleanUnversioned', ['setOpts'], clean.cleanUnversioned);
 gulp.task('cleanVersioned', ['setOpts'], clean.cleanVersioned);
+gulp.task('cleanNodeModules', clean.cleanNodeModules);
 
 // version
 
