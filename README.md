@@ -1,127 +1,29 @@
-![status](https://secure.travis-ci.org/robrich/orchestrator.png?branch=master)
+gulp_node_example
+=================
 
-Orchestrator
-============
+An example gulpfile for Node projects
 
-A module for sequencing and executing tasks and dependencies in maximum concurrency
 
-Usage
+About
 -----
 
-### 1. Get a reference:
+This project is an example Gulpfile that does the standard 5 CI tasks:
+1. clean
+2. Version
+3. Test
+4. Build
+5. Deploy
 
-```javascript
-var Orchestrator = require('orchestrator');
-var orchestrator = new Orchestrator();
-```
+The sample Node project has two files that you'll want to replace with your content:
 
-### 2. Load it up with stuff to do:
+- /index.js
+- /test/index.js
 
-A synchronous task:
+These files are part of the gulp script:
 
-```javascript
-orchestrator.add('thing1', function(){
-  // do stuff
-});
-```
+- /Gulpfile.js
+- /gulpLib/**
 
-An asynchronous task:
-
-```javascript
-orchestrator.add('thing2', function(callback){
-  // do stuff
-  callback(err);
-});
-```
-
-An asynchronous task using promises:
-
-```javascript
-var Q = require('q');
-
-orchestrator.add('thing3', function(){
-  var deferred = Q.defer();
-
-  // do async stuff
-  setTimeout(function () {
-    deferred.resolve();
-  }, 1);
-
-  return deferred.promise;
-});
-```
-
-A task that requires other tasks be done first:
-
-```javascript
-orchestrator.add('thing4', ['thing1','thing2','thing3'], function(){
-  // do stuff
-});
-```
-
-### 3. Run the tasks:
-
-Start the tasks you want to run:
-
-```javascript
-orchestrator.start('thing1','thing2','thing3', 'thing4');
-```
-
-or start all the tasks:
-
-```javascript
-orchestrator.start();
-```
-
-or specify a callback for when all tasks are complete:
-
-```javascript
-orchestrator.start('thing1', function (err) {
-  // all done
-});
-```
-
-FRAGILE: Orchestrator catches exceptions on sync runs to pass to your callback
-but doesn't hook to process.uncaughtException so it can't pass those exceptions
-to your callback
-
-FRAGILE: Orchestrator will ensure each task and each dependency is run once during an orchestration run
-even if you specify it to run more than once. (e.g. `orchestrator.start('thing1', 'thing1')`
-will only run 'thing1' once.) If you need it to run a task multiple times, wait for
-the orchestration to end (start's callback) then call start again.
-(e.g. `orchestrator.start('thing1', function () {orchestrator.start('thing1');})`.)
-Alternatively create a second orchestrator instance.
-
-### 4. Optionally listen to it's internals
-
-```javascript
-orchestrator.on('task_start', function (e) {
-  // e.mess is the log message
-  // e.task is the task name if the message applies to a task else `undefined`
-  // e.err is the error if event is 'err' else `undefined`
-});
-```
-
-Events include:
-- start: from start() method, shows you the task sequence
-- stop: from stop() method, the queue finished successfully
-- err: from stop() method, the queue was aborted due to a task error
-- task_start: from _runTask() method, task was started
-- task_stop: from _runTask() method, task completed successfully
-- task_err: from _runTask() method, task errored
-
-Note: fires either *stop or *err but not both.
-
-*Listen to all events*
-
-```javascript
-orchestrator.onAll(orchestrator, function (e) {
-  // e is the original event args
-  // e.src is event name
-});
-```
-
-### 5. Enjoy!
 
 LICENSE
 -------
