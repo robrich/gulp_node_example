@@ -12,11 +12,14 @@ var deploy = require('./gulpLib/deploy');
 
 
 var opts = {
+	buildVersion: require('./package.json').version,
 	buildNumber: process.env.BUILD_NUMBER,
 	copyrightHeader: 'Copyright {{year}} MyCompany, All Rights Reserved',
 	deployLocation: './deployDir',
 	verbose: true
 };
+opts.headerText = '/*! {{copyrightHeader}}\r\n   Hash: {{gitHash}}\r\n   Version: {{buildVersion}}\r\n   Branch: {{gitBranch}}\r\n   Build: {{buildNumber}}\r\n   Build date: {{now}} */';
+opts.doDeploy = !!process.env.BUILD_NUMBER; // FRAGILE: ASSUME: If we have no build number we're not on the CI server
 gulp.env.silent = !opts.verbose;
 
 opts.jshint = {
@@ -49,14 +52,9 @@ opts.mocha = {
 
 // stop the build on a task failure
 gulp.on('err', function (e) {
-	if (e.err) {
-		console.log();
-		console.log('Gulp build failed:');
-		process.exit(1);
-	}
-});
-gulp.on('task_err', function (e) {
-	console.log(e);
+	console.log();
+	console.log('Gulp build failed: '+e.message);
+	process.exit(1);
 });
 
 
@@ -70,7 +68,7 @@ gulp.task('default', ['clean', 'version', 'test', 'build', 'deploy'], noop);
 gulp.task('clean', ['cleanVersioned', 'cleanUnversioned', 'cleanNodeModules'], noop);
 gulp.task('version', ['getGitHash', 'getGitBranch'], noop);
 gulp.task('test', ['clean', 'runJSHint', 'runMocha'], noop);
-gulp.task('build', ['clean','test','minifyJavaScript', 'copyContentToDist', 'copyModulesToDist', 'setGitInPackageJson'], noop);
+gulp.task('build', ['clean','test','minifyJavaScript', 'copyContentToDist', 'copyModulesToDist', 'shrinkwrapDist', 'setGitInPackageJson'], noop);
 gulp.task('deploy', ['test','build', 'copyToDeployLocation', 'tagGit'], noop);
 
 // clean
@@ -88,12 +86,14 @@ gulp.task('getGitBranch', ['setOpts'], version.getGitBranch);
 
 gulp.task('runJSHint', ['setOpts', 'clean'], test.runJSHint);
 gulp.task('runMocha', ['clean'], test.runMocha);
+gulp.task('runNpmTest', ['clean'], test.runNpmTest); // FRAGILE: This can get recursive
 
 // build
 
 gulp.task('minifyJavaScript', ['clean', 'version', 'setOpts'], build.minifyJavaScript);
 gulp.task('copyContentToDist', ['clean', 'setOpts'], build.copyContentToDist);
 gulp.task('copyModulesToDist', ['clean', 'setOpts'], build.copyModulesToDist);
+gulp.task('shrinkwrapDist', ['clean', 'setOpts', 'copyModulesToDist', 'copyContentToDist'], build.shrinkwrapDist);
 gulp.task('setGitInPackageJson', ['clean', 'version', 'setOpts'], build.setGitInPackageJson);
 
 // deploy

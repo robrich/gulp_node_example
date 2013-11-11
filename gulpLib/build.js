@@ -8,9 +8,10 @@ var ignore = require('./lib/gulp-ignore');
 var ignoreDirectory = require('./lib/gulp-ignore-directory');
 var header = require('gulp-header');
 var path = require('path');
-var fsExtra = require('fs.extra');
+var ncp = require('ncp');
 var async = require('async');
 var es = require('event-stream');
+var childProcess = require('child_process');
 
 var opts;
 
@@ -20,12 +21,11 @@ var setOpts = function (o) {
 
 
 var minifyJavaScript = function (cb) {
-	var headerText = '/*! '+opts.copyrightHeader+'\r\n   Hash: '+opts.gitHash+'\r\n   Branch: '+opts.gitBranch+'\r\n   Build: '+opts.buildNumber+'\r\n   Build date: {{now}} */';
 	var stream = gulp.src('./**/*.js')
 		.pipe(ignore(['./node_modules/**','./test/**', './dist/**']))
 		.pipe(ignore(['./Gulpfile.js','./gulpLib/**'])) // Ignore gulp content
 		.pipe(uglify())
-		.pipe(header(headerText))
+		.pipe(header(opts.headerText, opts))
 		.pipe(gulp.dest('./dist'));
 	stream.once('end', cb);
 };
@@ -56,11 +56,21 @@ var copyModulesToDist = function (cb) {
 	async.each(
 		prodDepArray,
 		function (dep, cba) {
-			console.log(dep);
-			fsExtra.copyRecursive(path.join('./node_modules',dep), path.join('./dist/node_modules',dep), cba);
+			ncp(path.join('./node_modules',dep), path.join('./dist/node_modules',dep), cba);
 		},
 		cb
 	);
+};
+
+var shrinkwrapDist = function (cb) {
+	var npm = (process.platform === "win32" ? "npm.cmd" : "npm");
+	var s = childProcess.spawn(npm, ['shrinkwrap'], {stdio: 'inherit', cwd: './dist'});
+	s.on('close', function (err) {
+		if (err) {
+			return cb('npm shrinkwrap errored with exit code '+err);
+		}
+		cb(null);
+	});
 };
 
 var setGitInPackageJson = function (cb) {
@@ -84,5 +94,6 @@ module.exports = {
 	minifyJavaScript: minifyJavaScript,
 	copyContentToDist: copyContentToDist,
 	copyModulesToDist: copyModulesToDist,
+	shrinkwrapDist: shrinkwrapDist,
 	setGitInPackageJson: setGitInPackageJson
 };

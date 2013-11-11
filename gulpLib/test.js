@@ -28,12 +28,10 @@ var runJSHint = function (cb) {
 		.pipe(ignore(['./node_modules/**','./dist/**']))
 		.pipe(verbose(mess))
 		.pipe(jshint(opts.jshint))
+		.pipe(jshint.reporterSimple())
 		.pipe(es.map(function (file, cb) {
 			if (!file.jshint.success) {
 				jshintSuccess = false;
-				file.jshint.results.forEach(function (err/*, index*/) {
-					console.log(err.mess);
-				});
 			}
 			cb(null, file);
 		}));

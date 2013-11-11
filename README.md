@@ -23,7 +23,26 @@ These files are part of the gulp script:
 
 - /Gulpfile.js
 - /gulpLib/**
+- /package.json: merge the devDependencies into yours
 
+### Running the build:
+
+The build server should have [node](http://nodejs.org) installed and in `PATH`
+
+On each build:
+
+- `npm install`
+- `node_modules/.bin/gulp` from the root of the project
+
+If each command returns 0, the build succeeded, if any command returns non-zero, the build failed.
+Once the build is complete, you'll see the following:
+
+- /log: this is a folder of build logs including MSBuild logs and test logs.
+  Collect all files in this directory and publish them as build logs
+- /dist: these are deployment assets. Deploy these to necessary servers, and/or collect these in
+  the build server as deployment assets.
+
+Note: the test project uses git and assumes it is in `PATH`
 
 LICENSE
 -------

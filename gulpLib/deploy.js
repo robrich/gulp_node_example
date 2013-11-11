@@ -2,8 +2,8 @@
 
 "use strict";
 
-var fsExtra = require('fs.extra');
 var exec = require('child_process').exec;
+var ncp = require('ncp');
 
 
 var opts;
@@ -13,12 +13,15 @@ var setOpts = function (o) {
 };
 
 var copyToDeployLocation = function (cb) {
-	fsExtra.copyRecursive('./dist/', opts.deployLocation, cb);
+	if (!opts.doDeploy) {
+		return cb(null);
+	}
+	ncp('./dist/', opts.deployLocation, cb);
 };
 
 // Not a big fan of altering the version control system during a build, but the customer is always right
 var tagGit = function (cb) {
-	if (!opts.buildNumber) {
+	if (!opts.doDeploy) {
 		return cb(null); // successfully did nothing
 	}
 

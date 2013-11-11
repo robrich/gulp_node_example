@@ -27,8 +27,7 @@ var cleanUnversioned = function (cb) {
 };
 
 var cleanVersioned = function (cb) {
-	// TODO: remove echo once we're done debugging !!!!!
-	exec('echo git reset --hard', function (error, stdout, stderr) {
+	exec('git reset --hard', function (error, stdout, stderr) {
 		if (stderr) {
 			console.log(stderr);
 		}
