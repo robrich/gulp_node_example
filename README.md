@@ -8,6 +8,7 @@ About
 -----
 
 This project is an example Gulpfile that does the standard 5 CI tasks:
+
 1. clean
 2. Version
 3. Test
