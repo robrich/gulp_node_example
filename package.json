@@ -19,6 +19,7 @@
     "gulp": "*",
     "gulp-exec": "*",
     "gulp-header": "*",
+    "gulp-ignore": "*",
     "gulp-jshint": "*",
     "gulp-uglify": "*",
     "minimatch": "*",

@@ -4,7 +4,7 @@
 
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
-var ignore = require('./lib/gulp-ignore');
+var ignore = require('gulp-ignore');
 var verbose = require('./lib/gulp-verbose');
 var es = require('event-stream');
 //var fs = require('fs');
@@ -25,7 +25,7 @@ var runJSHint = function (cb) {
 	var jshintSuccess = true; // nothing disputed it yet
 	var mess = opts.verbose ? 'linting $file' : '';
 	var stream = gulp.src('./**/*.js')
-		.pipe(ignore(['./node_modules/**','./dist/**']))
+		.pipe(ignore({pattern:['./node_modules/**','./dist/**']}))
 		.pipe(verbose(mess))
 		.pipe(jshint(opts.jshint))
 		.pipe(jshint.reporterSimple())

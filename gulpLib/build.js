@@ -4,8 +4,7 @@
 
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
-var ignore = require('./lib/gulp-ignore');
-var ignoreDirectory = require('./lib/gulp-ignore-directory');
+var ignore = require('gulp-ignore');
 var header = require('gulp-header');
 var path = require('path');
 var ncp = require('ncp');
@@ -22,8 +21,8 @@ var setOpts = function (o) {
 
 var minifyJavaScript = function (cb) {
 	var stream = gulp.src('./**/*.js')
-		.pipe(ignore(['./node_modules/**','./test/**', './dist/**']))
-		.pipe(ignore(['./Gulpfile.js','./gulpLib/**'])) // Ignore gulp content
+		.pipe(ignore({pattern:['./node_modules/**','./test/**', './dist/**']}))
+		.pipe(ignore({pattern:['./Gulpfile.js','./gulpLib/**']})) // Ignore gulp content
 		.pipe(uglify())
 		.pipe(header(opts.headerText, opts))
 		.pipe(gulp.dest('./dist'));
@@ -34,7 +33,7 @@ var copyContentToDist = function (cb) {
 	var stream = gulp.src('./**/**')
 		.pipe(ignore(['./node_modules/**', './test/**', './dist/**', './**/*.js','./package.json']))
 		.pipe(ignore(['./gulpLib/**'])) // Ignore gulp content
-		.pipe(ignoreDirectory())
+		.pipe(ignore({isDirectory:true}))
 		.pipe(gulp.dest('./dist'));
 	stream.once('end', cb);
 };
